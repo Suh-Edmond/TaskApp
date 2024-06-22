@@ -11,281 +11,86 @@
             color="primary"
             no-caps
             label="Create Task"
-            @click="createTask()"
+            @click="showCreateDialog()"
           />
         </div>
       </div>
-      <div class="row">
-        <div class="col-12 col-md">
-          <q-table flat bordered :rows="data" :columns="columns" row-key="name">
-            <template v-slot:body="props">
-              <q-tr :props="props">
-                <q-td key="name" :props="props" class="text-weight-bold">
-                  {{ props.row.name }}
-                </q-td>
-                <q-td
-                  key="status"
-                  :props="props"
-                  v-if="props.row.status"
-                  class="text-secondary text-weight-bold"
-                >
-                  COMPLETED
-                </q-td>
-                <q-td
-                  key="status"
-                  :props="props"
-                  v-if="!props.row.status"
-                  class="text-negative text-weight-bold"
-                >
-                  INCOMPLETE
-                </q-td>
-                <q-td key="due_date" :props="props" class="text-weight-bold">
-                  {{ props.row.due_date }}
-                </q-td>
-                <q-td key="action" :props="props">
-                  <q-btn flat round>
-                    <q-icon
-                      name="menu"
-                      size="xs"
-                      color="primary"
-                      class="menu_icon"
-                      clickable
-                    >
-                      <q-menu>
-                        <q-list bordered separator style="width: 210px">
-                          <q-item
-                            clickable
-                            v-close-popup
-                            @click="showEditBox(props.row)"
-                          >
-                            <q-item-section avatar>
-                              <span>
-                                <q-icon name="edit" size="xs" class="edit" />
-                              </span>
-                            </q-item-section>
-                            <q-item-section>
-                              <q-item-label class="edit">Edit</q-item-label>
-                            </q-item-section>
-                          </q-item>
-                          <q-item clickable v-close-popup @click="deleteTask">
-                            <q-item-section avatar>
-                              <span>
-                                <q-icon
-                                  name="delete"
-                                  size="xs"
-                                  class="text-red"
-                                />
-                              </span>
-                            </q-item-section>
-                            <q-item-section>
-                              <q-item-label class="edit text-red"
-                                >Delete</q-item-label
-                              >
-                            </q-item-section>
-                          </q-item>
-                        </q-list>
-                      </q-menu>
-                    </q-icon>
-                  </q-btn>
-                </q-td>
-              </q-tr>
-            </template>
-          </q-table>
-        </div>
-      </div>
+      <tableComponent
+        :data="getTasks"
+        @onShowCreateDialog="showCreateDialog"
+        @onFetchTasks="fetchTask"
+      ></tableComponent>
     </div>
     <div class="col-2 col-md-2 col-lg-2 col-sm-12 col-xs-12"></div>
 
-    <!------------------------------------------EDIT=------------------>
-    <q-dialog v-model="showEditDialogBox">
-      <q-card style="min-width: 400px">
-        <q-card-section class="flex q-mx-md">
-          <div class="text-h6">Edit Task</div>
-          <q-space />
-          <div>
-            <q-btn flat icon="close" v-close-popup />
-          </div>
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          <q-form
-            @submit="onSubmit"
-            class="q-gutter-md"
-            :class="$q.screen.lg ? 'q-px-md' : ''"
-          >
-            <div>
-              <label for="credential" class="form_field"
-                >Title <span class="text-red">*</span></label
-              >
-              <q-input v-model="task.title" outlined dense type="text" />
-            </div>
-
-            <div>
-              <label for="credential" class="form_field"
-                >Due Date <span class="text-red">*</span></label
-              >
-              <q-input v-model="task.due_date" outlined dense type="date" />
-            </div>
-
-            <div>
-              <label for="credential" class="form_field"
-                >Status <span class="text-red">*</span></label
-              >
-              <q-select
-                outlined
-                v-model="task.status"
-                dense
-                :options="statuses"
-              />
-            </div>
-
-            <div>
-              <label for="credential" class="form_field"
-                >Description <span class="text-red">*</span></label
-              >
-              <q-input
-                v-model="task.description"
-                outlined
-                dense
-                type="textarea"
-              />
-            </div>
-
-            <div class="q-mt-lg q-mb-lg flex justify-end">
-              <q-btn
-                label="Save"
-                :loading="loading"
-                :disabled="false"
-                color="primary"
-                no-caps
-                type="submit"
-              >
-              </q-btn>
-            </div>
-          </q-form>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-    <!--------------------------------------END OF EDIT DIALOG----------->
+    <createTaskDialog
+      v-if="showEditDialogBox"
+      :formHeader="formHeader"
+    ></createTaskDialog>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
-// import { useTaskStore } from "src/stores/example-store";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import { onMounted } from "vue";
+import { LocalStorage } from "quasar";
+import { computed } from "vue";
+import createTaskDialog from "../../components/create-task-dialog.vue";
+import tableComponent from "../../components/table-component.vue";
 
-// const store = useTaskStore();
-onMounted(() => {
-  // console.log(store.getTasks);
-});
+const router = useRouter();
 
-const loading = ref(false);
-const task = ref({
-  title: "",
-  due_date: new Date(),
-  description: "",
-  status: "",
-});
-const statuses = [
-  {
-    label: "COMPLETED",
-    value: true,
-  },
-  {
-    label: "INCOMPLETE",
-    value: "false",
-  },
-];
+const $store = useStore();
 
-const onSubmit = async () => {
-  let payload = {
-    url: "protected/tasks/users/id",
-    commit: "SET_TASKS",
-    data: task,
-  };
-  // store.postReqest(payload);
-};
-
-const data = ref([
-  {
-    name: "tASK 1",
-    due_date: new Date(),
-    status: false,
-    id: "4534",
-  },
-  {
-    name: "tASK 1",
-    due_date: new Date(),
-    status: false,
-    id: "4534",
-  },
-  {
-    name: "tASK 1",
-    due_date: new Date(),
-    status: true,
-    id: "4534",
-  },
-]);
-
-const formatdDate = (date) => {
-  return moment(date).format("YYYY/MM/DD");
-};
-
-const columns = [
-  {
-    name: "name",
-    required: true,
-    label: "Name",
-    align: "left",
-    field: (row) => row.name,
-    format: (val) => `${val}`,
-    sortable: true,
-  },
-
-  {
-    name: "due_date",
-    required: true,
-    label: "Due Date",
-    align: "left",
-    field: (row) => row.name,
-    format: (val) => `${val}`,
-    sortable: true,
-  },
-  {
-    name: "status",
-    required: true,
-    label: "Status",
-    align: "left",
-    field: (row) => row.name,
-    format: (val) => `${val}`,
-    sortable: true,
-  },
-
-  {
-    name: "action",
-    label: "Action",
-    field: "action",
-    sortable: true,
-    align: "left",
-  },
-];
+const authUserId = LocalStorage.getItem("data").id;
 
 const showEditDialogBox = ref(false);
 
-const showEditBox = (data) => {
-  showEditDialogBox.value = true;
-  task.value = data;
-  // console.log(task.value);
+const formHeader = ref("Create Task");
 
-  return task;
+const onSubmit = async () => {};
+
+const getTasks = computed(() => {
+  let data = [];
+  if ($store.getters["example/getTasks"] !== undefined) {
+    $store.getters["example/getTasks"].forEach((ele) => {
+      data.push({
+        counter: $store.getters["example/getTasks"].indexOf(ele) + 1,
+        id: ele.id,
+        title: ele.title,
+        description: ele.description,
+        due_date: ele.due_date,
+        status: ele.status,
+        created_at: ele.created_at,
+        updated_at: ele.updated_at,
+        userId: ele.user_id,
+      });
+    });
+  }
+
+  return data;
+});
+
+const showCreateDialog = () => {
+  return (showEditDialogBox.value = !showEditDialogBox.value);
 };
 
-const deleteTask = async () => {};
+const fetchTask = () => {
+  let payload = {
+    url: `protected/tasks/users/${authUserId}`,
+    commit: "SET_TASKS",
+    data: null,
+    has_commit: true,
+  };
 
-const createTask = () => {
-  showEditDialogBox.value = true;
+  $store.dispatch("example/getRequest", payload).then((res) => {});
 };
+
+onMounted(() => {
+  fetchTask();
+});
 </script>
 
 <style lang="scss" scoped>

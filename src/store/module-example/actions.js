@@ -2,6 +2,7 @@ import { Notify, Platform } from "quasar";
 import { api } from "src/boot/axios";
 
 export function postRequest({ commit }, payload) {
+  commit("SET_LOADING", true);
   return api
     .post(payload.url, payload.data)
     .then((res) => {
@@ -12,7 +13,7 @@ export function postRequest({ commit }, payload) {
       Notify.create({
         type: "positive",
         color: "positive",
-        message: "Action completed successful",
+        message: payload.successMsg,
         position: Platform.is.mobile ? "bottom" : "top-right",
       });
       return res.data;
@@ -21,48 +22,89 @@ export function postRequest({ commit }, payload) {
       Notify.create({
         type: "negative",
         color: "negative",
-        message: "Action fail successful",
+        message: payload.errorMsg,
         position: Platform.is.mobile ? "bottom" : "top-right",
       });
       return error.response;
+    })
+    .finally(() => {
+      commit("SET_LOADING", false);
     });
 }
 
 export function getRequest({ commit }, payload) {
+  commit("SET_LOADING", true);
   return api
     .get(payload.url)
     .then((res) => {
       if (payload.has_commit) {
-        commit(payload.commit, res.data);
+        commit(payload.commit, res.data.data);
       }
 
       return res;
     })
     .catch((error) => {
       return error;
+    })
+    .finally(() => {
+      commit("SET_LOADING", false);
     });
 }
 
 export function putRequest({ commit }, payload) {
+  commit("SET_LOADING", true);
   return api
-    .put(payload.url)
+    .put(payload.url, payload.data)
     .then((res) => {
       if (res.has_commit) {
         commit(payload.commit, res.data);
       }
+
+      Notify.create({
+        type: "positive",
+        color: "positive",
+        message: payload.successMsg,
+        position: Platform.is.mobile ? "bottom" : "top-right",
+      });
+      return res.data;
     })
     .catch((error) => {
+      Notify.create({
+        type: "negative",
+        color: "negative",
+        message: payload.errorMsg,
+        position: Platform.is.mobile ? "bottom" : "top-right",
+      });
       return error;
+    })
+    .finally(() => {
+      commit("SET_LOADING", false);
     });
 }
 
-export function deleteRequest(payload) {
+export function deleteRequest({ commit }, payload) {
+  commit("SET_LOADING", true);
   return api
     .delete(payload.url)
     .then((res) => {
-      return res;
+      Notify.create({
+        type: "positive",
+        color: "positive",
+        message: payload.successMsg,
+        position: Platform.is.mobile ? "bottom" : "top-right",
+      });
+      return res.data;
     })
     .catch((error) => {
+      Notify.create({
+        type: "negative",
+        color: "negative",
+        message: payload.errorMsg,
+        position: Platform.is.mobile ? "bottom" : "top-right",
+      });
       return error;
+    })
+    .finally(() => {
+      commit("SET_LOADING", false);
     });
 }

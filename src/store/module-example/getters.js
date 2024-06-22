@@ -6,3 +6,7 @@ export function getTasks(state) {
 export function getTask(state) {
   return state.task;
 }
+
+export function getLoadingState(state) {
+  return state.loading;
+}
