@@ -46,7 +46,7 @@
                   class="form_button"
                   label="Login"
                   :loading="loading"
-                  :disabled="false"
+                  :disabled="validateForm"
                   color="primary"
                   no-caps
                   type="submit"
@@ -78,15 +78,18 @@
 
 <script setup>
 import { LocalStorage } from "quasar";
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
+
 const router = useRouter();
 
 const $store = useStore();
 
 const loading = ref(false);
+
 const isPwd = ref(false);
+
 const user = reactive({
   email: "",
   password: "",
@@ -103,10 +106,20 @@ const onSubmit = async () => {
     if (response.success) {
       router.push({ name: "dashboard" });
       LocalStorage.set("data", response.data);
+      Notify.create({
+        type: "positive",
+        color: "positive",
+        message: "Login Successful",
+        position: Platform.is.mobile ? "bottom" : "top-right",
+      });
     }
     loading.value = false;
   });
 };
+
+const validateForm = computed(() => {
+  return user.email == "" || user.password == "";
+});
 </script>
 
 <style lang="scss" scoped>

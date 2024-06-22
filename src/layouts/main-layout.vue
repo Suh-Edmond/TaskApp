@@ -1,12 +1,12 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header class="header text-white">
-      <q-toolbar>
+    <q-header class="header">
+      <q-toolbar class="q-ml-xl">
         <q-toolbar-title
           :class="$q.screen.lg ? 'header_title' : 'header_title_small'"
           class="q-ml-md"
         >
-          Task App
+          <label for="title">Task App</label>
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
@@ -52,6 +52,7 @@ export default {};
   font-size: 1.2rem;
   font-family: "Roboto";
   display: block;
+  padding-left: 2rem;
 }
 
 .header_title_small {

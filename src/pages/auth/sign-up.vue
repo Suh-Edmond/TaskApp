@@ -66,7 +66,7 @@
                       @click="isConfirmPwd = !isConfirmPwd"
                     />
                   </template>
-                  <template v-slot:hint>
+                  <template v-slot:hint v-if="onPasswordMisMatch">
                     <span class="text-red">Password Mismatch</span>
                   </template>
                 </q-input>
@@ -76,7 +76,7 @@
                   class="form_button"
                   label="Register"
                   :loading="loading"
-                  :disabled="false"
+                  :disabled="validateForm"
                   color="primary"
                   no-caps
                   type="submit"
@@ -114,11 +114,15 @@ import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 
 const $store = useStore();
+
 const router = useRouter();
 
 const loading = ref(false);
+
 const isPwd = ref(false);
+
 const isConfirmPwd = ref(false);
+
 const user = reactive({
   email: "",
   password: "",
@@ -137,9 +141,29 @@ const onSubmit = async () => {
     if (response.success) {
       router.push({ name: "login" });
     }
+
+    Notify.create({
+      type: "positive",
+      color: "positive",
+      message: "Account created successfully",
+      position: Platform.is.mobile ? "bottom" : "top-right",
+    });
     loading.value = false;
   });
 };
+
+const onPasswordMisMatch = computed(() => {
+  return this.user.password !== this.user.password_confirmation;
+});
+
+const validateForm = computed(() => {
+  return (
+    user.password == "" ||
+    onPasswordMisMatch() ||
+    user.name == "" ||
+    user.email == ""
+  );
+});
 </script>
 
 <style lang="scss" scoped>

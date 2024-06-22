@@ -157,8 +157,12 @@ const columns = [
 const emit = defineEmits(["onShowCreateDialog"]);
 
 const showEditBox = (data) => {
-  $store.commit("example/SET_TASK", data);
-  emit("onShowCreateDialog", data);
+  let payload = {
+    data: data,
+    title: "Update Task",
+  };
+  $store.commit("example/SET_TASK", payload.data);
+  emit("onShowCreateDialog", payload);
 };
 
 const deleteTask = async (data) => {

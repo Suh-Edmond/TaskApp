@@ -59,7 +59,7 @@
               <q-btn
                 label="Save"
                 :loading="loading"
-                :disabled="false"
+                :disabled="validateForm"
                 color="primary"
                 no-caps
                 type="submit"
@@ -86,9 +86,13 @@ defineProps({
 });
 
 const $store = useStore();
+
 const showEditDialogBox = ref(true);
+
 const loading = ref(false);
+
 const authUserId = LocalStorage.getItem("data").id;
+
 const task = reactive({
   title: "",
   due_date: "",
@@ -97,6 +101,7 @@ const task = reactive({
   userId: authUserId,
   id: null,
 });
+
 const statuses = [
   {
     label: "COMPLETED",
@@ -120,8 +125,8 @@ const onSubmit = () => {
     },
     url: "",
     has_commit: false,
-    successMsg:"Task saved successfully",
-    errorMsg:"An error occurred"
+    successMsg: "Task saved successfully",
+    errorMsg: "An error occurred",
   };
 
   const edited = $store.getters["example/getTask"];
@@ -137,9 +142,7 @@ const onSubmit = () => {
             data: null,
             has_commit: true,
           };
-          $store.dispatch("example/getRequest", payload).then((res) => {
-            console.log(res);
-          });
+          $store.dispatch("example/getRequest", payload).then((res) => {});
         }
       })
       .finally(() => {
@@ -200,6 +203,15 @@ const resetForm = () => {
 const closeDialog = () => {
   resetForm();
 };
+
+const validateForm = computed(() => {
+  return (
+    task.title == "" ||
+    task.description == "" ||
+    task.due_date == "" ||
+    task.status == ""
+  );
+});
 </script>
 
 <style lang="scss" scoped>

@@ -11,7 +11,7 @@
             color="primary"
             no-caps
             label="Create Task"
-            @click="showCreateDialog()"
+            @click="showCreateDialog({ title: 'Create Task' })"
           />
         </div>
       </div>
@@ -73,7 +73,8 @@ const getTasks = computed(() => {
   return data;
 });
 
-const showCreateDialog = () => {
+const showCreateDialog = (data) => {
+  formHeader.value = data.title;
   return (showEditDialogBox.value = !showEditDialogBox.value);
 };
 
