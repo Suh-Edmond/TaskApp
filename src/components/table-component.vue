@@ -127,20 +127,21 @@ const columns = [
   },
 
   {
-    name: "due_date",
-    required: true,
-    label: "Due Date",
-    align: "left",
-    field: (row) => row.due_date,
-    format: (val) => `${val}`,
-    sortable: true,
-  },
-  {
     name: "status",
     required: true,
     label: "Status",
     align: "left",
     field: (row) => row.status,
+    format: (val) => `${val}`,
+    sortable: true,
+  },
+
+  {
+    name: "due_date",
+    required: true,
+    label: "Due Date",
+    align: "left",
+    field: (row) => row.due_date,
     format: (val) => `${val}`,
     sortable: true,
   },
