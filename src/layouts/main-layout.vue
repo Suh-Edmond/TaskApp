@@ -52,8 +52,9 @@ const onLogout = () => {
 
   $store.dispatch("example/postRequest", payload).then((res) => {
     if (res.success) {
+      LocalStorage.remove("data");
+
       router.push({ name: "login" });
-      LocalStorage.removeItem("data");
     }
   });
 };
