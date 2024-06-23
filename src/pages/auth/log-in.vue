@@ -88,7 +88,7 @@ const $store = useStore();
 
 const loading = ref(false);
 
-const isPwd = ref(false);
+const isPwd = ref(true);
 
 const user = reactive({
   email: "",
@@ -100,18 +100,14 @@ const onSubmit = async () => {
     url: "/public/auth/login",
     has_commit: false,
     data: user,
+    successMsg: "Login Successful",
+    errorMsg: "Invalid Credentials",
   };
   loading.value = true;
   $store.dispatch("example/postRequest", payload).then((response) => {
     if (response.success) {
       router.push({ name: "dashboard" });
       LocalStorage.set("data", response.data);
-      Notify.create({
-        type: "positive",
-        color: "positive",
-        message: "Login Successful",
-        position: Platform.is.mobile ? "bottom" : "top-right",
-      });
     }
     loading.value = false;
   });

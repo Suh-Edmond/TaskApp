@@ -1,13 +1,31 @@
 <template>
   <q-layout view="hHh lpR fFf">
     <q-header class="header">
-      <q-toolbar class="q-ml-xl">
+      <q-toolbar class=" ">
         <q-toolbar-title
           :class="$q.screen.lg ? 'header_title' : 'header_title_small'"
-          class="q-ml-md"
         >
           <label for="title">Task App</label>
         </q-toolbar-title>
+        <q-btn-dropdown
+          class="logoutBtn q-pa-md"
+          flat
+          icon="person"
+          color="primary"
+        >
+          <q-list style="width: 150px" class="text-center q-mx-md">
+            <q-item clickable v-close-popup @click="onLogout">
+              <q-item-section avatar>
+                <span>
+                  <q-icon name="logout" class="q-ml-xl" size="xs" color="red" />
+                </span>
+              </q-item-section>
+              <q-item-section class="q-pa-lg">
+                <q-item-label>Logout</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
       </q-toolbar>
     </q-header>
     <q-page-container class="content">
@@ -16,8 +34,29 @@
   </q-layout>
 </template>
 
-<script>
-export default {};
+<script setup>
+import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
+import { LocalStorage } from "quasar";
+
+const router = useRouter();
+
+const $store = useStore();
+const onLogout = () => {
+  let payload = {
+    url: "public/auth/logout",
+    successMsg: "Logout Success",
+    errorMsg: "An error occurred",
+    has_commit: false,
+  };
+
+  $store.dispatch("example/postRequest", payload).then((res) => {
+    if (res.success) {
+      router.push({ name: "login" });
+      LocalStorage.removeItem("data");
+    }
+  });
+};
 </script>
 
 <style lang="scss" scoped>
@@ -27,18 +66,9 @@ export default {};
   box-sizing: border-box;
 }
 
-.footer {
-  background-color: $white1;
-  height: 2rem;
-}
-
 .content {
   background-color: $grey1;
   height: 100vh;
-}
-
-.app_name {
-  color: $primary;
 }
 
 .header {
@@ -65,45 +95,11 @@ export default {};
   display: block;
 }
 
-.header_note {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.sign_link {
-  text-decoration: none;
-  color: $primary;
-}
-
-.header_language {
-  margin-right: 0.5rem;
-}
-
 .lang {
   font-size: 0.6rem;
 }
 
-.appName {
-  font-family: "Roboto";
-  font-style: normal;
-  text-transform: capitalize;
-  color: $dark;
-  font-weight: 700;
-  font-size: 0.7rem;
-}
-
-.footer_text {
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 0.6rem;
-  align-items: center;
-  text-align: center;
-  padding-bottom: 1rem;
-}
-
-.copy_right {
-  font-size: large;
+.logoutBtn {
+  margin-right: 2rem;
 }
 </style>

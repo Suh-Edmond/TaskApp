@@ -7,7 +7,7 @@
       <div class="col-md-4 col-lg-4 col-sm-12 col-xs-12">
         <q-card :class="$q.screen.lg ? 'q-mt-lg' : 'q-mt-xl login-card'">
           <q-card-section>
-            <div class="text_h6 text-center q-pt-sm q-pb-sm">Login</div>
+            <div class="text_h6 text-center q-pt-sm q-pb-sm">Register</div>
             <div class="text-subtitle2 text-center q-pb-xs">
               Create an account to get started
             </div>
@@ -46,6 +46,11 @@
                       @click="isPwd = !isPwd"
                     />
                   </template>
+                  <template v-slot:hint>
+                    <span class="text-red" v-if="onPasswordLength"
+                      >Password length must be 8</span
+                    >
+                  </template>
                 </q-input>
               </div>
               <div>
@@ -66,8 +71,10 @@
                       @click="isConfirmPwd = !isConfirmPwd"
                     />
                   </template>
-                  <template v-slot:hint v-if="onPasswordMisMatch">
-                    <span class="text-red">Password Mismatch</span>
+                  <template v-slot:hint>
+                    <span class="text-red" v-if="onPasswordMisMatch"
+                      >Password Mismatch</span
+                    >
                   </template>
                 </q-input>
               </div>
@@ -119,15 +126,15 @@ const router = useRouter();
 
 const loading = ref(false);
 
-const isPwd = ref(false);
+const isPwd = ref(true);
 
-const isConfirmPwd = ref(false);
+const isConfirmPwd = ref(true);
 
 const user = reactive({
-  email: "",
-  password: "",
-  name: "",
-  password_confirmation: "",
+  email: null,
+  password: null,
+  name: null,
+  password_confirmation: null,
 });
 
 const onSubmit = async () => {
@@ -135,6 +142,8 @@ const onSubmit = async () => {
     url: "public/auth/register",
     data: user,
     has_commit: false,
+    successMsg: "Account created Successful",
+    errorMsg: "Account creation Failed",
   };
   loading.value = true;
   $store.dispatch("example/postRequest", payload).then((response) => {
@@ -142,26 +151,25 @@ const onSubmit = async () => {
       router.push({ name: "login" });
     }
 
-    Notify.create({
-      type: "positive",
-      color: "positive",
-      message: "Account created successfully",
-      position: Platform.is.mobile ? "bottom" : "top-right",
-    });
     loading.value = false;
   });
 };
 
 const onPasswordMisMatch = computed(() => {
-  return this.user.password !== this.user.password_confirmation;
+  return user.password !== user.password_confirmation;
+});
+
+const onPasswordLength = computed(() => {
+  return user.password != null && user.password.length < 8;
 });
 
 const validateForm = computed(() => {
   return (
-    user.password == "" ||
-    onPasswordMisMatch() ||
-    user.name == "" ||
-    user.email == ""
+    user.password == null ||
+    user.name == null ||
+    user.email == null ||
+    (user.password !== null && user.password.length < 8) ||
+    user.password !== user.password_confirmation
   );
 });
 </script>

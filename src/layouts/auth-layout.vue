@@ -1,12 +1,11 @@
 <template>
   <q-layout view="hHh lpR fFf">
     <q-header class="header text-white">
-      <q-toolbar>
+      <q-toolbar class="q-ml-xl">
         <q-toolbar-title
           :class="$q.screen.lg ? 'header_title' : 'header_title_small'"
-          class="q-ml-lg"
         >
-          Task App
+          <label for="" class="title">Task App</label>
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
@@ -27,18 +26,9 @@ export default {};
   box-sizing: border-box;
 }
 
-.footer {
-  background-color: $white1;
-  height: 2rem;
-}
-
 .content {
   background-color: $grey1;
   height: 100vh;
-}
-
-.app_name {
-  color: $primary;
 }
 
 .header {
@@ -64,45 +54,7 @@ export default {};
   display: block;
 }
 
-.header_note {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.sign_link {
-  text-decoration: none;
-  color: $primary;
-}
-
-.header_language {
-  margin-right: 0.5rem;
-}
-
-.lang {
-  font-size: 0.6rem;
-}
-
-.appName {
-  font-family: "Roboto";
-  font-style: normal;
-  text-transform: capitalize;
-  color: $dark;
-  font-weight: 700;
-  font-size: 0.7rem;
-}
-
-.footer_text {
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 0.6rem;
-  align-items: center;
-  text-align: center;
-  padding-bottom: 1rem;
-}
-
-.copy_right {
-  font-size: large;
+.title {
+  margin-left: 2rem;
 }
 </style>
