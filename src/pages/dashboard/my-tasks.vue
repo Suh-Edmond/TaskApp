@@ -2,7 +2,7 @@
   <div class="row q-mt-lg">
     <div class="col-2 col-md-2 col-lg-2 col-sm-12 col-xs-12"></div>
     <div class="col-8 col-md-8 col-xs-12 col-sm-12 col-lg-8">
-      <div class="row flex justify-between q-mt-lg q-ma-md">
+      <div class="row flex justify-between q-mt-lg q-my-md">
         <div>
           <label for="title" class="header_title">My Tasks</label>
         </div>
@@ -17,9 +17,12 @@
       </div>
       <tableComponent
         :data="getTasks"
+        :pagination="pagination"
         @onShowCreateDialog="showCreateDialog"
         @onShowTask="onShowTask"
-        @onFetchTasks="fetchTask"
+        @onFetchTasks="fetchTask(1, 2, '', '')"
+        @onRequest="onRequest"
+        @onQueryTask="onQueryTask"
       ></tableComponent>
     </div>
     <div class="col-2 col-md-2 col-lg-2 col-sm-12 col-xs-12"></div>
@@ -60,6 +63,14 @@ const taskObject = ref(null);
 
 const onSubmit = async () => {};
 
+const pagination = ref({
+  sortBy: "desc",
+  descending: false,
+  page: 1,
+  rowsPerPage: 5,
+  rowsNumber: 10,
+});
+
 const getTasks = computed(() => {
   let data = [];
   if ($store.getters["example/getTasks"] != null) {
@@ -91,19 +102,40 @@ const onShowTask = (data) => {
   return (showViewDialogBox.value = !showViewDialogBox.value);
 };
 
-const fetchTask = () => {
+const fetchTask = (page, per_page, filter, sortBy) => {
   let payload = {
-    url: `protected/tasks/users/${authUserId}`,
+    url: `protected/tasks/users/${authUserId}?page=${page}&per_page=${per_page}&filter=${filter}&sortBy=${sortBy}`,
     commit: "SET_TASKS",
     data: null,
     has_commit: true,
   };
 
-  $store.dispatch("example/getRequest", payload).then((res) => {});
+  $store.dispatch("example/getRequest", payload).then((res) => {
+    pagination.value.page = res.data.data.current_page;
+    pagination.value.rowsPerPage = res.data.data.per_page;
+    pagination.value.rowsNumber = res.data.data.total;
+  });
+};
+
+const onRequest = (props) => {
+  const { page, rowsPerPage, sortBy, descending, filter } = props.pagination;
+
+  fetchTask(page, rowsPerPage, filter, sortBy);
+};
+
+const onQueryTask = (data) => {
+  console.log(data);
+
+  fetchTask(
+    pagination.value.page ?? 1,
+    pagination.value.per_page ?? 5,
+    data.filter,
+    data.sortBy
+  );
 };
 
 onMounted(() => {
-  fetchTask();
+  fetchTask(1, 2, "", "");
 });
 </script>
 

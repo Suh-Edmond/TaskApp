@@ -2,8 +2,8 @@
   <div>
     <!------------------------------------------EDIT=------------------>
     <q-dialog v-model="showEditDialogBox">
-      <q-card style="min-width: 400px">
-        <q-card-section class="flex q-mx-md">
+      <q-card style="min-width: 450px" class="q-mx-md">
+        <q-card-section class="flex">
           <div class="text-h6">{{ formHeader }}</div>
           <q-space />
           <div>
