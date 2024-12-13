@@ -3,5 +3,6 @@ export default function () {
     tasks: null,
     task: null,
     loading: false,
+    pagination: null,
   };
 }

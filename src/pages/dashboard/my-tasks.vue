@@ -17,10 +17,10 @@
       </div>
       <tableComponent
         :data="getTasks"
-        :pagination="pagination"
+        :pagination="getPagination"
         @onShowCreateDialog="showCreateDialog"
         @onShowTask="onShowTask"
-        @onFetchTasks="fetchTask(1, 2, '', '')"
+        @onFetchTasks="fetchTask(1, 5, '', '')"
         @onRequest="onRequest"
         @onQueryTask="onQueryTask"
       ></tableComponent>
@@ -46,6 +46,7 @@ import { computed } from "vue";
 import createTaskDialog from "../../components/create-task-dialog.vue";
 import tableComponent from "../../components/table-component.vue";
 import taskDialog from "src/components/task-dialog.vue";
+import { onBeforeMount } from "vue";
 
 const router = useRouter();
 
@@ -61,14 +62,20 @@ const formHeader = ref("Create Task");
 
 const taskObject = ref(null);
 
-const onSubmit = async () => {};
+const getPagination = computed(() => {
+  console.log($store.getters["example/getPagination"].rowsPerPage);
 
-const pagination = ref({
-  sortBy: "desc",
-  descending: false,
-  page: 1,
-  rowsPerPage: 5,
-  rowsNumber: 10,
+  let paginate_object = {
+    sortBy: $store.getters["example/getPagination"].sortBy,
+    descending: $store.getters["example/getPagination"].descending,
+    page: $store.getters["example/getPagination"].page,
+    rowsPerPage: $store.getters["example/getPagination"].rowsPerPage,
+    rowsNumber: $store.getters["example/getPagination"].rowsNumber,
+  };
+
+  console.log(paginate_object);
+
+  return paginate_object;
 });
 
 const getTasks = computed(() => {
@@ -110,32 +117,39 @@ const fetchTask = (page, per_page, filter, sortBy) => {
     has_commit: true,
   };
 
-  $store.dispatch("example/getRequest", payload).then((res) => {
-    pagination.value.page = res.data.data.current_page;
-    pagination.value.rowsPerPage = res.data.data.per_page;
-    pagination.value.rowsNumber = res.data.data.total;
+  $store.dispatch("example/getRequest", payload).then((response) => {
+    $store.commit("example/SET_PAGINATION", {
+      sortBy: "title",
+      descending: false,
+      page: response.data.data.current_page,
+      rowsPerPage: response.data.data.per_page,
+      rowsNumber: response.data.data.total,
+    });
   });
 };
 
 const onRequest = (props) => {
-  const { page, rowsPerPage, sortBy, descending, filter } = props.pagination;
+  const { page, rowsPerPage, sortBy, descending } = props.pagination;
 
-  fetchTask(page, rowsPerPage, filter, sortBy);
+  fetchTask(page, rowsPerPage, "", sortBy);
 };
 
 const onQueryTask = (data) => {
-  console.log(data);
-
-  fetchTask(
-    pagination.value.page ?? 1,
-    pagination.value.per_page ?? 5,
-    data.filter,
-    data.sortBy
-  );
+  fetchTask(1, 5, data.filter, data.sortBy);
 };
 
 onMounted(() => {
-  fetchTask(1, 2, "", "");
+  fetchTask(1, 5, "", "");
+});
+
+onBeforeMount(() => {
+  $store.commit("example/SET_PAGINATION", {
+    sortBy: "desc",
+    descending: false,
+    page: 1,
+    rowsPerPage: 5,
+    rowsNumber: 0,
+  });
 });
 </script>
 

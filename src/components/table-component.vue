@@ -10,7 +10,7 @@
           :columns="columns"
           row-key="title"
           :loading="getLoadingState"
-          :pagination="pagination"
+          v-model:pagination="getPagination"
           :table-header-style="{ backgroundColor: '#213c65', color: '#FFFFFF' }"
           @request="onRequest"
         >
@@ -135,6 +135,10 @@ const $store = useStore();
 
 const getLoadingState = computed(() => {
   return $store.getters["example/getLoadingState"];
+});
+
+const getPagination = computed(() => {
+   return props.pagination
 });
 
 const columns = [
