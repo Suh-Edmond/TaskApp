@@ -4,6 +4,7 @@
       class="row q-px-sm"
       :class="$q.screen.lg ? 'q-pt-lg flex flex-center' : 'q-pt-sm'"
     >
+      <div class="col-4 col-md-4 col-lg-4 col-sm-12 col-xs-12"></div>
       <div class="col-md-4 col-lg-4 col-sm-12 col-xs-12">
         <q-card :class="$q.screen.lg ? 'q-mt-lg' : 'q-mt-xl login-card'">
           <q-card-section>
@@ -13,7 +14,7 @@
             </div>
             <q-form
               @submit="onSubmit"
-              class="q-gutter-md q-mt-lg"
+              class="q-gutter-md q-mt-lg q-px-lg"
               :class="$q.screen.lg ? 'q-px-md' : ''"
             >
               <div>
@@ -72,6 +73,7 @@
           </q-card-section>
         </q-card>
       </div>
+      <div class="col-4 col-md-4 col-lg-4 col-sm-12 col-xs-12"></div>
     </div>
   </q-page>
 </template>
@@ -137,12 +139,22 @@ const validateForm = computed(() => {
   text-align: center;
 }
 
+.main_login_text {
+  // color: $grey2;
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 1rem;
+  align-items: center;
+  text-align: center;
+}
+
 .text-subtitle2 {
   color: $grey2;
   font-family: "Roboto";
   font-style: normal;
-  font-weight: 400;
-  font-size: 0.8rem;
+  font-weight: 500;
+  font-size: 0.9rem;
   align-items: center;
   text-align: center;
 }
@@ -151,7 +163,7 @@ const validateForm = computed(() => {
   font-family: "Roboto";
   font-style: normal;
   font-weight: 500;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   align-items: center;
   color: $grey5;
 }
@@ -166,7 +178,7 @@ const validateForm = computed(() => {
   font-family: "Roboto";
   font-style: normal;
   font-weight: 700;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   align-items: center;
   color: $primary;
   cursor: pointer;
@@ -181,6 +193,6 @@ const validateForm = computed(() => {
 }
 
 .login-card {
-  height: 500px;
+  height: 400px;
 }
 </style>
