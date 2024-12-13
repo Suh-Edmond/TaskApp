@@ -11,7 +11,7 @@
             color="primary"
             no-caps
             label="Create Task"
-            @click="onShowCreateDialog({ title: 'Create Task', data: null })"
+            @click="onShowCreateTaskDialog"
           />
         </div>
       </div>
@@ -38,7 +38,6 @@
 
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { onMounted } from "vue";
 import { LocalStorage } from "quasar";
@@ -98,6 +97,9 @@ const onShowCreateDialog = (data) => {
   return (showEditDialogBox.value = !showEditDialogBox.value);
 };
 
+const onShowCreateTaskDialog = () => {
+  return (showEditDialogBox.value = !showEditDialogBox.value);
+};
 const onShowTask = (data) => {
   taskObject.value = data;
   return (showViewDialogBox.value = !showViewDialogBox.value);
