@@ -44,7 +44,7 @@ const router = useRouter();
 const $store = useStore();
 const onLogout = () => {
   let payload = {
-    url: "public/auth/logout",
+    url: "protected/auth/logout",
     successMsg: "Logout Success",
     errorMsg: "An error occurred",
     has_commit: false,

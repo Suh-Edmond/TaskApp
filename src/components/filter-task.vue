@@ -88,8 +88,10 @@ const queryTask = () => {
   console.log(filter.value);
 
   let payload = {
-    filter: filter.value != "" ? filter.value.value : "",
-    sortBy: sortBy.value != "" ? sortBy.value.value : "",
+    filter:
+      filter.value !== "" && filter.value !== null ? filter.value.value : "",
+    sortBy:
+      sortBy.value !== "" && sortBy.value !== null ? sortBy.value.value : "",
   };
 
   emit("onQueryTask", payload);

@@ -35,6 +35,18 @@
             </div>
             <div>
               <label for="credential" class="form_field"
+                >Status <span class="text-red">*</span></label
+              >
+              <q-select
+                class="col-md-5"
+                v-model="task.status"
+                outlined
+                dense
+                :options="task_status"
+              />
+            </div>
+            <div>
+              <label for="credential" class="form_field"
                 >Description <span class="text-red">*</span></label
               >
               <q-input
@@ -86,6 +98,17 @@ const loading = ref(false);
 
 const authUserId = LocalStorage.getItem("data").id;
 
+const task_status = ref([
+  {
+    label: "Pending",
+    value: "PENDING",
+  },
+  {
+    label: "Complete",
+    value: "COMPLETE",
+  },
+]);
+
 const task = reactive({
   title: "",
   due_date: "",
@@ -102,7 +125,7 @@ const onSubmit = () => {
       title: task.title,
       due_date: task.due_date,
       description: task.description,
-      status: "PENDING",
+      status: task.status.value,
       userId: authUserId,
     },
     url: "",
