@@ -9,3 +9,7 @@ export function SET_TASK(state, data) {
 export function SET_LOADING(state, data) {
   state.loading = data;
 }
+
+export function SET_PAGINATION(state, data) {
+  state.pagination = data;
+}

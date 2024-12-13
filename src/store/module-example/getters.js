@@ -10,3 +10,7 @@ export function getTask(state) {
 export function getLoadingState(state) {
   return state.loading;
 }
+
+export function getPagination(state) {
+  return state.pagination;
+}

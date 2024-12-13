@@ -1,7 +1,8 @@
 export default function () {
   return {
-    tasks: [],
+    tasks: null,
     task: null,
     loading: false,
+    pagination: null,
   };
 }

@@ -13,14 +13,14 @@
           icon="person"
           color="primary"
         >
-          <q-list style="width: 150px" class="text-center q-mx-md">
+          <q-list style="width: 150px" class="text-center">
             <q-item clickable v-close-popup @click="onLogout">
-              <q-item-section avatar>
-                <span>
-                  <q-icon name="logout" class="q-ml-xl" size="xs" color="red" />
+              <q-item-section avatar class="q-pl-lg">
+                <span class="q-pl-lg">
+                  <q-icon name="logout" class="" size="xs" color="red" />
                 </span>
               </q-item-section>
-              <q-item-section class="q-pa-lg">
+              <q-item-section class="">
                 <q-item-label>Logout</q-item-label>
               </q-item-section>
             </q-item>
@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { LocalStorage } from "quasar";
 
@@ -44,7 +44,7 @@ const router = useRouter();
 const $store = useStore();
 const onLogout = () => {
   let payload = {
-    url: "public/auth/logout",
+    url: "protected/auth/logout",
     successMsg: "Logout Success",
     errorMsg: "An error occurred",
     has_commit: false,

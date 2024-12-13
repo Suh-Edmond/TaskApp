@@ -2,8 +2,8 @@
   <div>
     <!------------------------------------------EDIT=------------------>
     <q-dialog v-model="showEditDialogBox">
-      <q-card style="min-width: 400px">
-        <q-card-section class="flex q-mx-md">
+      <q-card style="min-width: 500px" class="q-mx-md">
+        <q-card-section class="flex">
           <div class="text-h6">{{ formHeader }}</div>
           <q-space />
           <div>
@@ -22,6 +22,9 @@
                 >Title <span class="text-red">*</span></label
               >
               <q-input v-model="task.title" outlined dense type="text" />
+              <small v-show="validatetitleFieldLength" class="text-red"
+                >Description must have at least 10 characters</small
+              >
             </div>
 
             <div>
@@ -30,19 +33,18 @@
               >
               <q-input v-model="task.due_date" outlined dense type="date" />
             </div>
-
             <div>
               <label for="credential" class="form_field"
                 >Status <span class="text-red">*</span></label
               >
               <q-select
-                outlined
+                class="col-md-5"
                 v-model="task.status"
+                outlined
                 dense
-                :options="statuses"
+                :options="task_status"
               />
             </div>
-
             <div>
               <label for="credential" class="form_field"
                 >Description <span class="text-red">*</span></label
@@ -53,6 +55,9 @@
                 dense
                 type="textarea"
               />
+              <small v-show="validateDescriptionFieldLength" class="text-red"
+                >Description must have at least 50 characters</small
+              >
             </div>
 
             <div class="q-mt-lg q-mb-lg flex justify-end">
@@ -79,7 +84,7 @@ import { useStore } from "vuex";
 import { LocalStorage } from "quasar";
 import { ref } from "vue";
 import { reactive } from "vue";
-import { computed, watch } from "vue";
+import { computed, watchEffect } from "vue";
 
 defineProps({
   formHeader: String,
@@ -93,6 +98,17 @@ const loading = ref(false);
 
 const authUserId = LocalStorage.getItem("data").id;
 
+const task_status = ref([
+  {
+    label: "Pending",
+    value: "PENDING",
+  },
+  {
+    label: "Complete",
+    value: "COMPLETE",
+  },
+]);
+
 const task = reactive({
   title: "",
   due_date: "",
@@ -101,17 +117,6 @@ const task = reactive({
   userId: authUserId,
   id: null,
 });
-
-const statuses = [
-  {
-    label: "COMPLETED",
-    value: 1,
-  },
-  {
-    label: "INCOMPLETE",
-    value: 0,
-  },
-];
 
 const onSubmit = () => {
   loading.value = true;
@@ -127,6 +132,7 @@ const onSubmit = () => {
     has_commit: false,
     successMsg: "Task saved successfully",
     errorMsg: "An error occurred",
+    set_loader: true,
   };
 
   const edited = $store.getters["example/getTask"];
@@ -137,7 +143,7 @@ const onSubmit = () => {
       .then((response) => {
         if (response.success) {
           let payload = {
-            url: `protected/tasks/users/${authUserId}`,
+            url: `protected/tasks/users/${authUserId}?page=1&per_page=5&filter=&sortBy=`,
             commit: "SET_TASKS",
             data: null,
             has_commit: true,
@@ -157,7 +163,7 @@ const onSubmit = () => {
         .then((response) => {
           if (response.success) {
             let payload = {
-              url: `protected/tasks/users/${authUserId}`,
+              url: `protected/tasks/users/${authUserId}?page=1&per_page=5&filter=&sortBy=`,
               commit: "SET_TASKS",
               data: null,
               has_commit: true,
@@ -174,7 +180,7 @@ const onSubmit = () => {
   }
 };
 
-const setFormFields = watch(() => {
+const setFormFields = watchEffect(() => {
   const edited = $store.getters["example/getTask"];
 
   if (edited != null) {
@@ -182,16 +188,18 @@ const setFormFields = watch(() => {
     task.description = edited.description;
     task.due_date = edited.due_date;
     task.id = edited.id;
-    task.status = edited.status
-      ? { label: "COMPLETED", value: 1 }
-      : { label: "INCOMPLETE", value: 0 };
+    task.status =
+      edited.status == "COMPLETE"
+        ? { label: "Complete", value: "COMPLETE" }
+        : { label: "Pending", value: "PENDING" };
   }
 
   return task;
 });
 
 const resetForm = () => {
-  (task.due_date = ""), (task.description = "");
+  task.due_date = "";
+  task.description = "";
   task.status = "";
   task.userId = authUserId;
   task.id = null;
@@ -202,15 +210,19 @@ const resetForm = () => {
 
 const closeDialog = () => {
   resetForm();
+  $store.commit("example/SET_TASK", null);
 };
 
 const validateForm = computed(() => {
-  return (
-    task.title == "" ||
-    task.description == "" ||
-    task.due_date == "" ||
-    task.status == ""
-  );
+  return task.title == "" || task.description == "" || task.due_date == "";
+});
+
+const validateDescriptionFieldLength = computed(() => {
+  return task.description != "" && task.description.length < 50;
+});
+
+const validatetitleFieldLength = computed(() => {
+  return task.title != "" && task.title.length < 10;
 });
 </script>
 
