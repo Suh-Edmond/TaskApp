@@ -138,7 +138,7 @@ const getLoadingState = computed(() => {
 });
 
 const getPagination = computed(() => {
-   return props.pagination
+  return props.pagination;
 });
 
 const columns = [
@@ -195,8 +195,8 @@ const showEditBox = (data) => {
     data: data,
     title: "Update Task",
   };
-  $store.commit("example/SET_TASK", payload.data);
   emit("onShowCreateDialog", payload);
+  $store.commit("example/SET_TASK", payload.data);
 };
 
 const showViewBox = (data) => {

@@ -78,13 +78,18 @@ const sortOptions = ref([
 ]);
 
 const validateQuery = computed(() => {
-  return sortBy.value == "" && filter.value == "";
+  return (
+    (sortBy.value == "" || sortBy.value == null) &&
+    (filter.value == "" || filter.value == null)
+  );
 });
 
 const queryTask = () => {
+  console.log(filter.value);
+
   let payload = {
-    filter: filter.value != undefined ? filter.value.value : "",
-    sortBy: sortBy.value != undefined ? sortBy.value.value : "",
+    filter: filter.value != "" ? filter.value.value : "",
+    sortBy: sortBy.value != "" ? sortBy.value.value : "",
   };
 
   emit("onQueryTask", payload);

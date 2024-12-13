@@ -113,7 +113,7 @@ const changeTaskStatus = () => {
 
 const fetchTask = () => {
   let payload = {
-    url: `protected/tasks/users/${authUserId}`,
+    url: `protected/tasks/users/${authUserId}?page=1&per_page=5&filter=&sortBy=`,
     commit: "SET_TASKS",
     data: null,
     has_commit: true,
@@ -127,8 +127,6 @@ const closeDialog = () => {
 };
 
 onMounted(() => {
-  console.log($store.getters["example/getTask"]);
-
   viewTask.value = $store.getters["example/getTask"];
   toggle.value = viewTask.value.status == "COMPLETE";
 });

@@ -11,14 +11,14 @@
             color="primary"
             no-caps
             label="Create Task"
-            @click="showCreateDialog({ title: 'Create Task' })"
+            @click="onShowCreateDialog({ title: 'Create Task', data: null })"
           />
         </div>
       </div>
       <tableComponent
         :data="getTasks"
         :pagination="getPagination"
-        @onShowCreateDialog="showCreateDialog"
+        @onShowCreateDialog="onShowCreateDialog"
         @onShowTask="onShowTask"
         @onFetchTasks="fetchTask(1, 5, '', '')"
         @onRequest="onRequest"
@@ -48,8 +48,6 @@ import tableComponent from "../../components/table-component.vue";
 import taskDialog from "src/components/task-dialog.vue";
 import { onBeforeMount } from "vue";
 
-const router = useRouter();
-
 const $store = useStore();
 
 const authUserId = LocalStorage.getItem("data").id;
@@ -63,8 +61,6 @@ const formHeader = ref("Create Task");
 const taskObject = ref(null);
 
 const getPagination = computed(() => {
-  console.log($store.getters["example/getPagination"].rowsPerPage);
-
   let paginate_object = {
     sortBy: $store.getters["example/getPagination"].sortBy,
     descending: $store.getters["example/getPagination"].descending,
@@ -72,8 +68,6 @@ const getPagination = computed(() => {
     rowsPerPage: $store.getters["example/getPagination"].rowsPerPage,
     rowsNumber: $store.getters["example/getPagination"].rowsNumber,
   };
-
-  console.log(paginate_object);
 
   return paginate_object;
 });
@@ -99,7 +93,7 @@ const getTasks = computed(() => {
   return data;
 });
 
-const showCreateDialog = (data) => {
+const onShowCreateDialog = (data) => {
   formHeader.value = data.title;
   return (showEditDialogBox.value = !showEditDialogBox.value);
 };
