@@ -52,12 +52,14 @@ export function getRequest({ commit }, payload) {
 }
 
 export function putRequest({ commit }, payload) {
-  commit("SET_LOADING", true);
+  if (payload.set_loader) {
+    commit("SET_LOADING", true);
+  }
   return api
     .put(payload.url, payload.data)
     .then((res) => {
-      if (res.has_commit) {
-        commit(payload.commit, res.data);
+      if (payload.has_commit) {
+        commit(payload.commit, res.data.data);
       }
 
       Notify.create({

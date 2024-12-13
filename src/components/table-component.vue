@@ -8,6 +8,8 @@
         :columns="columns"
         row-key="title"
         :loading="getLoadingState"
+        :pagination="pagination"
+        @request="onRequest"
       >
         <template v-slot:body="props">
           <q-tr :props="props">
@@ -20,18 +22,13 @@
             <q-td
               key="status"
               :props="props"
-              v-if="props.row.status"
-              class="text-secondary text-weight-bold"
+              :class="
+                props.row.status == 'COMPLETE'
+                  ? 'text-secondary text-weight-bold'
+                  : 'text-info text-weight-bold'
+              "
             >
-              COMPLETED
-            </q-td>
-            <q-td
-              key="status"
-              :props="props"
-              v-if="!props.row.status"
-              class="text-negative text-weight-bold"
-            >
-              INCOMPLETE
+              {{ props.row.status }}
             </q-td>
             <q-td key="due_date" :props="props" class="text-weight-bold">
               {{ props.row.due_date }}
@@ -59,6 +56,20 @@
                         </q-item-section>
                         <q-item-section>
                           <q-item-label class="edit">Edit</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                      <q-item
+                        clickable
+                        v-close-popup
+                        @click="showViewBox(props.row)"
+                      >
+                        <q-item-section avatar>
+                          <span>
+                            <q-icon name="info" size="xs" class="edit" />
+                          </span>
+                        </q-item-section>
+                        <q-item-section>
+                          <q-item-label class="edit">View</q-item-label>
                         </q-item-section>
                       </q-item>
                       <q-item
@@ -96,9 +107,14 @@
 <script setup>
 import { useStore } from "vuex";
 import { computed } from "vue";
-defineProps({
+import { defineEmits } from "vue";
+
+const props = defineProps({
   data: Array,
+  pagination: Object,
 });
+
+const emit = defineEmits(["onShowCreateDialog", "onFetchTasks", "onShowTask"]);
 
 const $store = useStore();
 
@@ -155,8 +171,6 @@ const columns = [
   },
 ];
 
-const emit = defineEmits(["onShowCreateDialog"]);
-
 const showEditBox = (data) => {
   let payload = {
     data: data,
@@ -164,6 +178,15 @@ const showEditBox = (data) => {
   };
   $store.commit("example/SET_TASK", payload.data);
   emit("onShowCreateDialog", payload);
+};
+
+const showViewBox = (data) => {
+  let payload = {
+    data: data,
+    title: "View Task",
+  };
+  $store.commit("example/SET_TASK", payload.data);
+  emit("onShowTask", data);
 };
 
 const deleteTask = async (data) => {
@@ -177,5 +200,9 @@ const deleteTask = async (data) => {
   $store.dispatch("example/deleteRequest", payload).then((res) => {
     emit("onFetchTasks");
   });
+};
+
+const onRequest = (props) => {
+  emit("onRequest", props);
 };
 </script>

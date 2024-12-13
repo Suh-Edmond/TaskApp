@@ -31,7 +31,7 @@
               <q-input v-model="task.due_date" outlined dense type="date" />
             </div>
 
-            <div>
+            <!-- <div>
               <label for="credential" class="form_field"
                 >Status <span class="text-red">*</span></label
               >
@@ -41,7 +41,7 @@
                 dense
                 :options="statuses"
               />
-            </div>
+            </div> -->
 
             <div>
               <label for="credential" class="form_field"
@@ -104,12 +104,12 @@ const task = reactive({
 
 const statuses = [
   {
-    label: "COMPLETED",
-    value: 1,
+    label: "COMPLETE",
+    value: "COMPLETE",
   },
   {
-    label: "INCOMPLETE",
-    value: 0,
+    label: "PENDING",
+    value: "PENDING",
   },
 ];
 
@@ -120,13 +120,14 @@ const onSubmit = () => {
       title: task.title,
       due_date: task.due_date,
       description: task.description,
-      status: task.status.value,
+      status: "PENDING",
       userId: authUserId,
     },
     url: "",
     has_commit: false,
     successMsg: "Task saved successfully",
     errorMsg: "An error occurred",
+    set_loader: true,
   };
 
   const edited = $store.getters["example/getTask"];
@@ -205,12 +206,7 @@ const closeDialog = () => {
 };
 
 const validateForm = computed(() => {
-  return (
-    task.title == "" ||
-    task.description == "" ||
-    task.due_date == "" ||
-    task.status == ""
-  );
+  return task.title == "" || task.description == "" || task.due_date == "";
 });
 </script>
 

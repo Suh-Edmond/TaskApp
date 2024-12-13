@@ -18,6 +18,7 @@
       <tableComponent
         :data="getTasks"
         @onShowCreateDialog="showCreateDialog"
+        @onShowTask="onShowTask"
         @onFetchTasks="fetchTask"
       ></tableComponent>
     </div>
@@ -27,6 +28,8 @@
       v-if="showEditDialogBox"
       :formHeader="formHeader"
     ></createTaskDialog>
+
+    <taskDialog v-if="showViewDialogBox"> </taskDialog>
   </div>
 </template>
 
@@ -39,6 +42,7 @@ import { LocalStorage } from "quasar";
 import { computed } from "vue";
 import createTaskDialog from "../../components/create-task-dialog.vue";
 import tableComponent from "../../components/table-component.vue";
+import taskDialog from "src/components/task-dialog.vue";
 
 const router = useRouter();
 
@@ -48,16 +52,20 @@ const authUserId = LocalStorage.getItem("data").id;
 
 const showEditDialogBox = ref(false);
 
+const showViewDialogBox = ref(false);
+
 const formHeader = ref("Create Task");
+
+const taskObject = ref(null);
 
 const onSubmit = async () => {};
 
 const getTasks = computed(() => {
   let data = [];
-  if ($store.getters["example/getTasks"] !== undefined) {
-    $store.getters["example/getTasks"].forEach((ele) => {
+  if ($store.getters["example/getTasks"] != null) {
+    $store.getters["example/getTasks"].data.forEach((ele) => {
       data.push({
-        counter: $store.getters["example/getTasks"].indexOf(ele) + 1,
+        counter: $store.getters["example/getTasks"].data.indexOf(ele) + 1,
         id: ele.id,
         title: ele.title,
         description: ele.description,
@@ -76,6 +84,11 @@ const getTasks = computed(() => {
 const showCreateDialog = (data) => {
   formHeader.value = data.title;
   return (showEditDialogBox.value = !showEditDialogBox.value);
+};
+
+const onShowTask = (data) => {
+  taskObject.value = data;
+  return (showViewDialogBox.value = !showViewDialogBox.value);
 };
 
 const fetchTask = () => {
