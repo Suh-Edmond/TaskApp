@@ -14,6 +14,9 @@ npm install
 quasar dev
 ```
 
+### UI Library used
+[https://quasar.dev/]
+
 
 ### Lint the files
 ```bash
