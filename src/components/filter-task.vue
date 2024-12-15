@@ -14,7 +14,8 @@
       hide-bottom-space
     />
     <q-select
-      class="col-5 col-md-5 col-sm-12 col-xs-12 q-pl-md"
+      class="col-5 col-md-5 col-sm-12 col-xs-12"
+      :class="$q.platform.is.desktop ? 'q-ml-sm q-mt-sm' : ''"
       v-model="sortBy"
       outlined
       dense
@@ -32,6 +33,7 @@
       @click="queryTask"
       no-caps
       class="flex justify-end col-md-1"
+      :class="$q.platform.is.desktop ? 'q-mt-sm' : ''"
       size="md"
     >
     </q-btn>
