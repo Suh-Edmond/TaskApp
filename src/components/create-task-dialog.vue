@@ -242,6 +242,7 @@ const validateForm = computed(() => {
     task.title == "" ||
     task.description == "" ||
     task.due_date == "" ||
+    task.status == "" ||
     validateDescriptionFieldLength.value
   );
 });
