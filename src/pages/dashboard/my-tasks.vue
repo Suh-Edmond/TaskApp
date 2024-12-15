@@ -87,6 +87,7 @@ const onShowEditTaskDialog = (data) => {
 };
 
 const onShowCreateTaskDialog = () => {
+  formHeader.value = "Create Task";
   showEditDialogBox.value = !showEditDialogBox.value;
 };
 const onShowTask = (data) => {
