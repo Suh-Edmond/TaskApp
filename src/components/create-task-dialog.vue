@@ -1,13 +1,13 @@
 <template>
   <div>
     <!------------------------------------------EDIT=------------------>
-    <q-dialog v-model="showEditDialogBox">
+    <q-dialog v-model="showDialog">
       <q-card style="min-width: 500px" class="q-mx-md">
         <q-card-section class="flex">
           <div class="text-h6">{{ formHeader }}</div>
           <q-space />
           <div>
-            <q-btn flat icon="close" v-close-popup @click="closeDialog" />
+            <q-btn flat icon="close" @click="closeDialog" />
           </div>
         </q-card-section>
 
@@ -86,13 +86,12 @@ import { ref } from "vue";
 import { reactive } from "vue";
 import { computed, watchEffect } from "vue";
 
-defineProps({
+const props = defineProps({
   formHeader: String,
 });
 
+const emits = defineEmits(["closeDialog"]);
 const $store = useStore();
-
-const showEditDialogBox = ref(true);
 
 const loading = ref(false);
 
@@ -108,6 +107,8 @@ const task_status = ref([
     value: "COMPLETE",
   },
 ]);
+
+const showDialog = ref(true);
 
 const task = reactive({
   title: "",
@@ -148,13 +149,20 @@ const onSubmit = () => {
             data: null,
             has_commit: true,
           };
-          $store.dispatch("example/getRequest", payload).then((res) => {});
+          $store.dispatch("example/getRequest", payload).then((res) => {
+            $store.commit("example/SET_PAGINATION", {
+              sortBy: "title",
+              descending: false,
+              page: res.data.data.current_page,
+              rowsPerPage: res.data.data.per_page,
+              rowsNumber: res.data.data.total,
+            });
+          });
         }
       })
       .finally(() => {
-        showEditDialogBox.value = false;
+        closeDialog();
         loading.value = false;
-        resetForm();
       });
   } else {
     (payload.url = `protected/tasks/${edited.id}/update`),
@@ -168,14 +176,26 @@ const onSubmit = () => {
               data: null,
               has_commit: true,
             };
-            $store.dispatch("example/getRequest", payload).then((res) => {});
-            $store.commit("example/SET_TASK", null);
+            $store
+              .dispatch("example/getRequest", payload)
+              .then((res) => {
+                $store.commit("example/SET_PAGINATION", {
+                  sortBy: "title",
+                  descending: false,
+                  page: res.data.data.current_page,
+                  rowsPerPage: res.data.data.per_page,
+                  rowsNumber: res.data.data.total,
+                });
+              })
+              .finally(() => {
+                $store.commit("example/SET_TASK", null);
+              });
           }
         })
+        .catch((error) => {})
         .finally(() => {
-          showEditDialogBox.value = false;
+          closeDialog();
           loading.value = false;
-          resetForm();
         });
   }
 };
@@ -211,10 +231,17 @@ const resetForm = () => {
 const closeDialog = () => {
   resetForm();
   $store.commit("example/SET_TASK", null);
+
+  emits("closeDialog", false);
 };
 
 const validateForm = computed(() => {
-  return task.title == "" || task.description == "" || task.due_date == "";
+  return (
+    task.title == "" ||
+    task.description == "" ||
+    task.due_date == "" ||
+    validateDescriptionFieldLength.value
+  );
 });
 
 const validateDescriptionFieldLength = computed(() => {
@@ -222,7 +249,7 @@ const validateDescriptionFieldLength = computed(() => {
 });
 
 const validatetitleFieldLength = computed(() => {
-  return task.title != "" && task.title.length < 10;
+  return task.title != "" && task.title.length < 5;
 });
 </script>
 
