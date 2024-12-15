@@ -11,14 +11,13 @@
             color="primary"
             no-caps
             label="Create Task"
-            @click="onShowCreateTaskDialog"
+            @click="onShowCreateTaskDialog()"
           />
         </div>
       </div>
       <tableComponent
         :data="getTasks"
-        :pagination="getPagination"
-        @onShowCreateDialog="onShowCreateDialog"
+        @onShowEditTaskDialog="onShowEditTaskDialog"
         @onShowTask="onShowTask"
         @onFetchTasks="fetchTask(1, 5, '', '')"
         @onRequest="onRequest"
@@ -30,9 +29,11 @@
     <createTaskDialog
       v-if="showEditDialogBox"
       :formHeader="formHeader"
+      @closeDialog="closeDialog"
     ></createTaskDialog>
 
-    <taskDialog v-if="showViewDialogBox"> </taskDialog>
+    <taskDialog v-if="showViewDialogBox" @closeDialog="closeViewTaskDialog">
+    </taskDialog>
   </div>
 </template>
 
@@ -59,18 +60,6 @@ const formHeader = ref("Create Task");
 
 const taskObject = ref(null);
 
-const getPagination = computed(() => {
-  let paginate_object = {
-    sortBy: $store.getters["example/getPagination"].sortBy,
-    descending: $store.getters["example/getPagination"].descending,
-    page: $store.getters["example/getPagination"].page,
-    rowsPerPage: $store.getters["example/getPagination"].rowsPerPage,
-    rowsNumber: $store.getters["example/getPagination"].rowsNumber,
-  };
-
-  return paginate_object;
-});
-
 const getTasks = computed(() => {
   let data = [];
   if ($store.getters["example/getTasks"] != null) {
@@ -92,13 +81,13 @@ const getTasks = computed(() => {
   return data;
 });
 
-const onShowCreateDialog = (data) => {
+const onShowEditTaskDialog = (data) => {
   formHeader.value = data.title;
-  return (showEditDialogBox.value = !showEditDialogBox.value);
+  showEditDialogBox.value = !showEditDialogBox.value;
 };
 
 const onShowCreateTaskDialog = () => {
-  return (showEditDialogBox.value = !showEditDialogBox.value);
+  showEditDialogBox.value = !showEditDialogBox.value;
 };
 const onShowTask = (data) => {
   taskObject.value = data;
@@ -132,6 +121,18 @@ const onRequest = (props) => {
 
 const onQueryTask = (data) => {
   fetchTask(1, 5, data.filter, data.sortBy);
+};
+
+const closeDialog = (data) => {
+  showEditDialogBox.value = data;
+
+  return showEditDialogBox.value;
+};
+
+const closeViewTaskDialog = (data) => {
+  showViewDialogBox.value = data;
+
+  return showViewDialogBox.value;
 };
 
 onMounted(() => {

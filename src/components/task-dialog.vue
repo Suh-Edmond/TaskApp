@@ -7,7 +7,7 @@
           <div class="text-h6">Task Details</div>
           <q-space />
           <div>
-            <q-btn flat icon="close" v-close-popup @click="closeDialog()" />
+            <q-btn flat icon="close" @click="closeDialog()" />
           </div>
         </q-card-section>
 
@@ -77,6 +77,8 @@ import { ref } from "vue";
 import { onMounted } from "vue";
 import { LocalStorage } from "quasar";
 
+const emits = defineEmits(["closeDialog"]);
+
 const $store = useStore();
 
 const showViewDialogBox = ref(true);
@@ -123,6 +125,7 @@ const fetchTask = () => {
 };
 
 const closeDialog = () => {
+  emits("closeDialog", false);
   fetchTask();
 };
 

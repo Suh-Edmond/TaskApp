@@ -120,11 +120,10 @@ import filterTask from "./filter-task.vue";
 
 const props = defineProps({
   data: Array,
-  pagination: Object,
 });
 
 const emit = defineEmits([
-  "onShowCreateDialog",
+  "onShowEditTaskDialog",
   "onFetchTasks",
   "onShowTask",
   "onRequest",
@@ -138,7 +137,15 @@ const getLoadingState = computed(() => {
 });
 
 const getPagination = computed(() => {
-  return props.pagination;
+  let paginate_object = {
+    sortBy: $store.getters["example/getPagination"].sortBy,
+    descending: $store.getters["example/getPagination"].descending,
+    page: $store.getters["example/getPagination"].page,
+    rowsPerPage: $store.getters["example/getPagination"].rowsPerPage,
+    rowsNumber: $store.getters["example/getPagination"].rowsNumber,
+  };
+
+  return paginate_object;
 });
 
 const columns = [
@@ -195,7 +202,7 @@ const showEditBox = (data) => {
     data: data,
     title: "Update Task",
   };
-  emit("onShowCreateDialog", payload);
+  emit("onShowEditTaskDialog", payload);
   $store.commit("example/SET_TASK", payload.data);
 };
 
