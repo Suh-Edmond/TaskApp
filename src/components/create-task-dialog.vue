@@ -23,7 +23,7 @@
               >
               <q-input v-model="task.title" outlined dense type="text" />
               <small v-show="validatetitleFieldLength" class="text-red"
-                >Description must have at least 10 characters</small
+                >Description must have between 10 and 255 characters</small
               >
             </div>
 
@@ -56,8 +56,8 @@
                 type="textarea"
               />
               <small v-show="validateDescriptionFieldLength" class="text-red"
-                >Description must have at least 50 characters</small
-              >
+                >Description must have between 50 and 1000 characters
+              </small>
             </div>
 
             <div class="q-mt-lg q-mb-lg flex justify-end">
@@ -245,11 +245,16 @@ const validateForm = computed(() => {
 });
 
 const validateDescriptionFieldLength = computed(() => {
-  return task.description != "" && task.description.length < 50;
+  return (
+    (task.description != "" && task.description.length < 50) ||
+    task.description.length > 1000
+  );
 });
 
 const validatetitleFieldLength = computed(() => {
-  return task.title != "" && task.title.length < 5;
+  return (
+    (task.title != "" && task.title.length < 10) || task.title.length > 255
+  );
 });
 </script>
 
