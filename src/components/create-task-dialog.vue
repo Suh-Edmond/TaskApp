@@ -2,7 +2,10 @@
   <div>
     <!------------------------------------------EDIT=------------------>
     <q-dialog v-model="showDialog">
-      <q-card style="min-width: 500px" class="q-mx-md">
+      <q-card
+        :style="$q.platform.is.desktop ? 'width: 350px' : 'width: 450px'"
+        class="q-mx-md"
+      >
         <q-card-section class="flex">
           <div class="text-h6">{{ formHeader }}</div>
           <q-space />

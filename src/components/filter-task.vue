@@ -4,7 +4,7 @@
     style="background-color: #ffffff; border-radius: 4px"
   >
     <q-select
-      class="col-md-5"
+      class="col-5 col-md-5 col-sm-12 col-xs-12"
       v-model="filter"
       outlined
       dense
@@ -14,7 +14,7 @@
       hide-bottom-space
     />
     <q-select
-      class="col-md-5 q-pl-md"
+      class="col-5 col-md-5 col-sm-12 col-xs-12 q-pl-md"
       v-model="sortBy"
       outlined
       dense
