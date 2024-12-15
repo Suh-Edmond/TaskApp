@@ -161,6 +161,7 @@ const onSubmit = () => {
         }
       })
       .finally(() => {
+        resetForm();
         closeDialog();
         loading.value = false;
       });
@@ -194,6 +195,7 @@ const onSubmit = () => {
         })
         .catch((error) => {})
         .finally(() => {
+          resetForm();
           closeDialog();
           loading.value = false;
         });
